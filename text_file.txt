@@ -1,2 +1,1 @@
-Here's some text from main woo
-New line from my_feature
+Here's some text from my_feature woo
