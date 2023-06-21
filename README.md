@@ -4,7 +4,7 @@ This repository serves as a simple, safe place to experiment with Git/GitHub com
 
 # Git? Github? Why should I care?
 
-![Sample Github Flow](images/github_flow.pdf)
+![Sample Github Flow](images/github_flow.png)
 
 # Getting Started
 
