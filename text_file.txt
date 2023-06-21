@@ -1,1 +1,1 @@
-Here's some text from main woo
+Here's some text. When you pull this repository, this is how the file will appear by default.
