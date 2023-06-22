@@ -1,14 +1,16 @@
 # CSU Git Tutorial
 
-This repository serves as a simple, safe place to experiment with Git/GitHub commands. The original intended audience was CSU physics graduate students who need to learn version control for their analysis work, but the principles here can apply to anyone trying to learn Git. This tutorial will focus on using Git via a command-line interface, specifically Linux/Mac command line. This interface is commonly used on high-performance computing clusters that don't have a graphical interface. Many modern particle physics experiments run their production code on such compute clusters, so knowing how to work with a command-line interface is essential.  
+This repository serves as a simple, safe place to experiment with Git/GitHub commands. The original intended audience was CSU physics graduate students who need to learn version control for their analysis work, but the principles here can apply to anyone trying to learn Git. This tutorial will focus on using Git via a command-line interface, specifically the Linux/Mac command line. This interface is commonly used on high-performance computing clusters that don't have a graphical interface. Many modern particle physics experiments run their production code on such compute clusters, so knowing how to work with a command-line interface is essential.  
+
+This tutorial is intended for those with little to no Git experience. We'll only cover the basics here, but additional resources are provided at the bottom of this page.
 
 # Git? Github? Why should I care?
 
-Simply put, Git is free, open-source version control software. Utilized correctly, it allows many people to work from the same code base without stepping on each others' toes or breaking the production code for everyone. Git can create "snapshots" or your repository at a given time, and those snapshots can be retrieved later. It also allows for individuals to branch off the "main" code branch to implement their own changes. Modifications made in these _feature branches_ wont' affect the main branch until the repository maintainer(s) decided to merge the changes into main. A simple visualization of this is shown below.
+Simply put, Git is free, open-source version control software. Utilized correctly, it allows many people to work from the same code base without stepping on each others' toes or breaking the production code for everyone. Git can create "snapshots," or "commits" of your repository at a given time, and you can always refer back to those code states later. It also allows for individuals to branch off the "main" code to implement their own changes. Modifications made in these _feature branches_ won't affect the main branch until the repository maintainer(s) decide to merge the changes into the main branch. A simple visualization of this is shown below.
 
 ![Sample Github Flow](images/github_flow.png)
 
-Any repository that uses Git can be stored on GitHub, a cloud-based hosting service for managing git repositories. Many of the commands we'll learn here can be performed in GitHub rather than on the command line, but this isn't always an option when working in a command-line environment such as those found on most high-performance compute clusters. 
+Any repository that uses Git can be stored on GitHub, a cloud-based hosting service for managing git repositories. Many of the commands we'll learn here can be performed in GitHub's graphical interface rather than on the command line, but this isn't always an option when working in a command-line environment such as those found on most high-performance compute clusters. 
 
 As for why you should care, there are several reasons:
 - __Branch workflow__: Git allows individuals to modify and experiment with code in a way that doesn't interfere with others. This allows for improvements to be introduced in a staged, parallel manner, ensuring overall stability of the main code base.
@@ -26,7 +28,7 @@ from the command line. Your output should say something like
 git version 2.34.1
 ```
 
-The next step is to "clone" this repository from the remote (GitHub) to local (your machine). Click the green "Code" button in the upper-right of this page and copy the URL there. Then, from the command line, run
+The next step is to "clone" this repository from the _remote_ (GitHub) to _local_ (your machine). Click the green "Code" button in the upper-right of this page and copy the URL there. Then, from the command line, run
 ```
 git clone <copied_url>
 ```
