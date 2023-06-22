@@ -68,11 +68,111 @@ We see that we've successfully created and switched to `my_new_branch`.
 
 ## Modifying the Code
 
+Next, let's see what happens when we modify a file. Open up `text_file.txt` in your favorite text editor and you'll see that it contains a single line of text:
 
+```
+Here's some text. When you pull this repository, this is how the file will appear by default.
+```
+
+Let's add a second line with some arbitrary text:
+
+```
+Here's some text. When you pull this repository, this is how the file will appear by default.
+Here's a new line.
+```
+
+Now, if we run `git status` we'll see that Git has detected a change to this file:
+
+```
+On branch my_new_branch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   text_file.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+There's now a new section labeled "Changes not staged for commit." As you may have realized, this is where you'll see a list of files that have been modified since the last time someone "committed" changes to the code, i.e., since the last code snapshot. You'll also notice that Git suggests two commands: `git add` to add your updated file to the "staging" area (things that will be updated in the next code snapshot) and `git restore` to restore the file to the state it was in during the previous snapshot. Before adding or restoring files, though, I suggest using `git diff` to examine the changes to your file. If you run `git diff text_file.txt` you'll see something like
+
+```
+diff --git a/text_file.txt b/text_file.txt
+index 48125aa..b3f3b2a 100644
+--- a/text_file.txt
++++ b/text_file.txt
+@@ -1 +1,2 @@
+ Here's some text. When you pull this repository, this is how the file will appear by default.
++Here's a new line.
+```
+
+The first line tells you which files are being compared. In this case, we're looking at two versions of `text_file.txt` labeled `a` and `b`. The next line shows the file indices as seen by Git. These have a specific meaning in Git, but we don't need to go into that much detail here. The next two lines tell you that version `a` of the file (the previous code state version) will be represented by minus signs, while version `b` (the current version) will be represented by plus signs. The numbers sandwiched between `@@` tell you how many lines are being shown for each file. The `-1` tells us that, for file `a` (remember this one is represented with minus signs), one line is shown. The `+1,2` bit tells you that, for file `b`, one line is shown starting from line 2. Since we only modified the second line of `text_file.txt`, this makes sense. Finally, the bottom lines show you the actual differences between the two files. In this case, the only difference is that the `b` version has one additional line, represented here with the plus sign. If there were lines of code that were only in the `a` version, those would be displayed with a minus sign next to them. 
+
+Don't underestimate `git diff`&mdash;it's an invaluable tool that shows you exactly what has changed beteween code snapshots. In addition to individual files, it can also show differences between branches or other code snapshots. I recommend always looking at the output of `git diff` before staging any changes. Speaking of which, let's finally use `git add` to stage this one change for a commit:
+
+```
+git add text_file.txt
+```
+
+The `git status` output will now look like
+
+```
+On branch my_new_branch
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   text_file.txt
+```
+
+which tells us that our modified file is currently staged for a commit. We can also use `git restore --staged` to "unstage" the file. Let's go ahead and "commit" this change, meaning it will be added to the next code snapshot. When committing code changes, it's recommended to write a _commit message_ that explains what you changed and why. You can write a message while you commit using the `-m` flag like so:
+
+```
+git commit -m "Add line of text"
+```
+
+Writing good commit messages is crucial when working with many people on the same code base. We could go down a rabbit hole of how to write good commit messages here, but for now I'll just provide [this link](https://www.theserverside.com/video/Follow-these-git-commit-message-guidelines#:~:text=If%20you%20want%20to%20write,Instead%2C%20describe%20what%20was%20done.) for you to peruse at your leisure. 
+
+After commiting your changes, you'll get some output like
+```
+ 1 file changed, 1 insertion(+)
+```
+
+which is what we'd expect for only changing a single line. If you now run `git status` again, you'll see that we're back to a state of `nothing to commit, working tree clean`. To view a log of our commit and the ones before it, we can use `git log -n 1` (the `-n` flag specifies how many commits to show):
+
+```
+commit cf474596ec0b2464638bd7df0039661a1414e07c (HEAD -> my_new_branch)
+Author: Andrew Mogan <andrew.mogan@colostate.edu>
+Date:   Thu Jun 22 11:41:03 2023 -0600
+
+    Add line of text
+
+```
+Aside from the first line, this is largely self-explanatory&mdash;you'll see the person who made the commit (me, in this case), the date and timestamp of the commit, and the commit message. The first line shows the _commit hash_, a unique identifier for this code snapshot that we can use to revert back to this code state at any time. We can also use this hash as input to `git diff` if we want to compare some future commit to this one. This first line also introduces an important keyword in Git, `HEAD`. Basically, `HEAD` is your current branch's latest commit, so `HEAD -> my_new_branch` says that our commit was added to the branch `my_new_branch`. If you want to look at older commits, you can increase the number passed to `-n`. By default, Git will display as many commits as it can fit on the screen in reverse chronological order, so I recommend using `-n` to just show the last handful of commits. 
+
+Finally, we're ready to "push" our changes to the remote repository. In general, this is done my simply running `git push` after commiting your changes, but, in our case, you'll probably see something like
+
+```
+fatal: The current branch my_new_branch has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin my_new_branch
+```
+
+What this tells you is that `my_new_branch` only exists in your local repository but not the remote, so Git isn't sure where to push these changes. Luckily, Git tells us the exact command to fix this: `git push --set-upstream origin my_new_branch`. This will create a branch of the same name on the remote repository and push your changes there. After pushing this way, you'll see some technical output that isn't terribly important for our purposes followed by something like
+
+```
+To https://github.com/andrewmogan/csu_git_tutorial.git
+ * [new branch]      my_new_branch -> my_new_branch
+Branch 'my_new_branch' set up to track remote branch 'my_new_branch' from 'origin'.
+```
+
+which confirms that `my_new_branch` has now been added to the remote. 
+
+## Pulling Changes from Remote
+
+So far, we've looked at making our own changes to the code and pushing those changes to the remote repository. However, you won't be able to push your changes unless your local repository is up-to-date with the remote version. To get the latest changes from the remote, simply run `git pull`. If your code is up-to-date, you'll see `Already up to date.` printed to the terminal. Otherwise, Git will show a list of files that have changed and how many insertions or deletions there were for each file. `git pull` is actually a combination of two other Git commands: `git fetch` followed by `git merge`. `git fetch` checks the remote repository for changes, but doesn't do anything with those changes. `git merge` is used to merge changes from one branch or commit to another. Remember to pull frequently so that your code doesn't deviate too far from the remote. If deviations between branches become unresolvable, you'll encounter the dreaded "conflict." We won't go into resolving Git conflicts here, but you can use [this link](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line) when you're ready to learn.
 
 ## Summary of Common Git Commands
 
-This list below summarizes some of the most common commands. Note that some of these commands require additional command-line arguments that are not shown here. If you forget some command-line arguments, Git will usually tell you what's missing. 
+This list below summarizes the commands we learned in this simple tutorial. Note that some of these commands require additional command-line arguments that are not shown here. If you forget some command-line arguments, Git will usually tell you what's missing. 
 
 - `git clone`: copy remote repository to your local machine.
 - `git status`: view current edits, branch, etc.
@@ -86,6 +186,22 @@ This list below summarizes some of the most common commands. Note that some of t
 - `git push`: “push” your changes from local to remote.
 - `git diff`: view difference in your code state relative to some previous commit (most recent commit by default).
 - `git log`: display a log of commits. Pass the `-n` flag to limit how many log entries are printed.
+
+# Conclusion
+Congratulations, you now know the basics of version control using Git! There are many more advanced topics that aren't covered here, such as Git issues, pull requests, forks, and much, much more. Git can seem intimidating to work with, but as long as you're careful and follow best practices, you won't need to worry about breaking important code and causing your coworkers a huge headache. I'll leave you with a few guidelines based on my personal experience that can help you avoid future headaches:
+
+- __Commit early and often__: The more commits you have, the more stable code states you can revert back to in case of emergency. Frequent commit messages also help document incremental code changes.
+- __Write good commit messages__: I didn't go into much detail here on commit messages, but please avoid writing things like "bug fix." What bug? How was it fixed? This message isn't helpful for anyone. Instead, write a concise description of what you changed, or create a [longer commit message](https://haydar-ai.medium.com/learning-how-to-git-creating-a-longer-commit-message-16ca32746c3a) if necessary.
+- __Make experimental changes in a feature branch__: In general, you don't want to work from the `main` branch since your changes may introduce bugs or other unintended behavior.
+- __Things will go wrong; don't panic__: Inevitably, something will break, or Git will spit out some message that you don't understand. Luckily, we live in an era of Google and ChatGPT. Whatever issue you run into with Git, someone else has been in the same boat, so learn from them.
+
+# Additional Resources
+
+Below are some useful links for furhter information on using Git.
+
+- [Software Carpentry Workshop on using Git](https://swcarpentry.github.io/git-novice/). This tutorial starts off simple, but goes into more detail than I did here. Once you're comfortable with the material in my tutorial, this one could be a good next step.
+- [FreeCodeCamp guide to good commit messages](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/)
+- [Resovling merge conflicts](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line). This is an important topic that we didn't cover here.
 
 
 
